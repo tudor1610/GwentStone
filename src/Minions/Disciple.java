@@ -8,4 +8,8 @@ public class Disciple extends PlayedCard {
 		super(card);
 	}
 
+	@Override
+	public void useAbility(PlayedCard attacked) {
+		attacked.setHealth(-2, false);
+	}
 }

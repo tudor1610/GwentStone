@@ -2,7 +2,6 @@ package game;
 
 import fileio.CardInput;
 
-import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 
 public class PlayedCard {
@@ -13,6 +12,7 @@ public class PlayedCard {
 	private ArrayList<String> colors;
 	private String name;
 	private boolean frozen;
+	private boolean canAttack;
 
 	public PlayedCard() {
 
@@ -26,9 +26,21 @@ public class PlayedCard {
 		colors = new ArrayList<>();
 		colors.addAll(card.getColors());
 		name = card.getName();
-		frozen = true;
+		frozen = false;
+		canAttack = true;
 	}
 
+	public void useAbility(PlayedCard attacked) {
+		System.out.println("Ceva clar nu a mers bine");
+	}
+
+	public boolean getCanAttack() {
+		return canAttack;
+	}
+
+	public void setCanAttack(boolean canAttack) {
+		this.canAttack = canAttack;
+	}
 
 	public int getMana() {
 		return mana;
@@ -50,8 +62,13 @@ public class PlayedCard {
 		return health;
 	}
 
-	public void setHealth(int health) {
-		this.health = health;
+	public void setHealth(int health, Boolean k) {
+		if (k) {
+			this.health = health;
+		} else {
+			this.health = this.health - health;
+		}
+
 	}
 
 	public String getDescription() {

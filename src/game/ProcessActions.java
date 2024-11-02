@@ -21,6 +21,15 @@ public class ProcessActions {
 			board.add(new BoardRow());
 	}
 
+	public void updateCardsAfterTurn() {
+		for (BoardRow row : board) {
+			for (PlayedCard card : row.getRow()) {
+				card.setCanAttack(true);
+				card.setFrozen(false);
+			}
+		}
+	}
+
 	private void getPlayerTurn(ArrayNode output, int idx) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		ObjectNode command = objectMapper.createObjectNode();
@@ -30,6 +39,7 @@ public class ProcessActions {
 	}
 
 	public void placeCard(Player player,int playerIdx, int handIdx, ArrayNode output) {
+		playerIdx = (playerIdx + 1) % 2;
 		if (player.getHand().size() <= 0 || handIdx >= player.getHand().size())
 			return;
 		if (player.getMana() < player.getHand().get(handIdx).getMana()) {
@@ -56,20 +66,16 @@ public class ProcessActions {
 					CardInput card = player.getHand().get(handIdx);
 					String cardName = card.getName();
 					PlayedCard new_card;
-					switch (cardName) {
-						case "Goliath" -> {
-							new_card = new Goliath(card);
-						}
-						case "Warden" -> {
-							new_card = new Warden(card);
-						}
-						case "The Ripper" -> {
-							new_card = new TheRipper(card);
-						}
-						default -> {
-							new_card = new Miraj(card);
-						}
+					if (cardName.equals("Goliath")) {
+						new_card = new Goliath(card);
+					} else if (cardName.equals("Warden")) {
+						new_card = new Warden(card);
+					} else if (cardName.equals("The Ripper")) {
+						new_card = new TheRipper(card);
+					} else {
+						new_card = new Miraj(card);
 					}
+
 					ArrayList<CardInput> hand = player.getHand();
 					hand.remove(handIdx);
 					player.setHand(hand);
@@ -77,7 +83,7 @@ public class ProcessActions {
 					ArrayList<PlayedCard> row = board.get(1 + playerIdx).getRow();
 					row.add(new_card);
 					board.get(1 + playerIdx).setRow(row);
-					System.out.println("Placed card " + new_card.getName() + " on row " + (1 + playerIdx));
+					//System.out.println("Placed card " + new_card.getName() + " on row " + (1 + playerIdx));
 				}
 
 			} else {
@@ -94,20 +100,14 @@ public class ProcessActions {
 					CardInput card = player.getHand().get(handIdx);
 					String cardName = card.getName();
 					PlayedCard new_card;
-					switch (cardName) {
-						case "Berserker" -> {
-							new_card = new Berserker(card);
-						}
-						case "Disciple" -> {
-							new_card = new Disciple(card);
-						}
-						case "TheCursedOne" -> {
-							new_card =  new TheCursedOne(card);
-						}
-						default -> {
-							new_card = new Sentinel(card);
-						}
-
+					if (cardName.equals("Berserker")) {
+						new_card = new Berserker(card);
+					} else if (cardName.equals("Disciple")) {
+						new_card = new Disciple(card);
+					} else if (cardName.equals("The Cursed One")) {
+						new_card = new TheCursedOne(card);
+					} else {
+						new_card = new Sentinel(card);
 					}
 					ArrayList<CardInput> hand = player.getHand();
 					hand.remove(handIdx);
@@ -116,19 +116,177 @@ public class ProcessActions {
 					ArrayList<PlayedCard> row = board.get((4 - playerIdx) % 4).getRow();
 					row.add(new_card);
 					board.get((4 - playerIdx) % 4).setRow(row);
-					System.out.println("Placed card " + new_card.getName() + " on row " + ((4 - playerIdx) % 4));
+					//System.out.println("Placed card " + new_card.getName() + " on row " + ((4 - playerIdx) % 4));
 				}
 			}
 		}
 
 	}
 
-	public void cardUsesAttack() {
+	public boolean isAttackValid(int x1, int x2, int y2) {
 
+		String card = board.get(x2).getRow().get(y2).getName();
+		if (card.equals("Goliath") || card.equals("Warden")) {
+			return true;
+		}
+
+		if (x1 <= 1) {
+			ArrayList<PlayedCard> row = board.get(2).getRow();
+			for (PlayedCard minion : row) {
+				if (minion.getName().equals("Warden") || minion.getName().equals("Goliath")) {
+					return false;
+				}
+			}
+		} else {
+			ArrayList<PlayedCard> row = board.get(1).getRow();
+			for (PlayedCard minion : row) {
+				if (minion.getName().equals("Warden") || minion.getName().equals("Goliath")) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
-	public void  cardUsesAbility() {
+	public void cardUsesAttack(ActionsInput action, ArrayNode output) {
+		int x1 = action.getCardAttacker().getX();
+		int y1 = action.getCardAttacker().getY();
+		int x2 = action.getCardAttacked().getX();
+		int y2 = action.getCardAttacked().getY();
 
+		if ((x1 < 0 || x1 > 3) || (x2 < 0 || x2 > 3) || (y1 >= board.get(x1).getRow().size()) || (y2 >= board.get(x2).getRow().size())) {
+			return;
+		}
+
+		if ((x1 <= 1 && x2 <= 1) || (x1 >=2 && x2 >= 2)) {
+			//error: card doesn't belong to enemy
+			ObjectNode command = attackError(action);
+			command.put("error", "Attacked card does not belong to the enemy.");
+			output.add(command);
+
+		} else if (!isAttackValid(x1, x2, y2)) {
+			//error: card is not a tank
+			ObjectNode command = attackError(action);
+			command.put("error", "Attacked card is not of type 'Tank'.");
+			output.add(command);
+		} else if (!board.get(x1).getRow().get(y1).getCanAttack()) {
+			//error: already attacked
+			ObjectNode command = attackError(action);
+			command.put("error", "Attacker card has already attacked this turn.");
+			output.add(command);
+		} else if (board.get(x1).getRow().get(y1).isFrozen()) {
+			//error: card is frozen
+			ObjectNode command = attackError(action);
+			command.put("error", "Attacker card is frozen.");
+			output.add(command);
+		} else {
+			PlayedCard bully = board.get(x1).getRow().get(y1);
+			bully.setCanAttack(false);
+			PlayedCard defender = board.get(x2).getRow().get(y2);
+			defender.setHealth(bully.getAttackDamage(), false);
+			if (defender.getHealth() <= 0) {
+				board.get(x2).getRow().remove(y2);
+			} else {
+				//if it fails, try .remove(y1) + .add(y1, bully)
+				board.get(x1).getRow().get(y1).setCanAttack(false);
+				board.get(x2).getRow().get(y2).setHealth(defender.getHealth(), true);
+			}
+		}
+	}
+
+	private ObjectNode attackError(ActionsInput action) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode command = objectMapper.createObjectNode();
+		command.put("command", "cardUsesAttack");
+		ObjectNode coords1 = objectMapper.createObjectNode();
+		coords1.put("x", action.getCardAttacker().getX());
+		coords1.put("y", action.getCardAttacker().getY());
+		command.set("cardAttacker", coords1);
+
+		ObjectNode coords2 = objectMapper.createObjectNode();
+		coords2.put("x", action.getCardAttacked().getX());
+		coords2.put("y", action.getCardAttacked().getY());
+		command.set("cardAttacked", coords2);
+		return command;
+	}
+
+	private ObjectNode abilityError(ActionsInput action) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode command = objectMapper.createObjectNode();
+		command.put("command", "cardUsesAbility");
+		ObjectNode coords1 = objectMapper.createObjectNode();
+		coords1.put("x", action.getCardAttacker().getX());
+		coords1.put("y", action.getCardAttacker().getY());
+		command.set("cardAttacker", coords1);
+
+		ObjectNode coords2 = objectMapper.createObjectNode();
+		coords2.put("x", action.getCardAttacked().getX());
+		coords2.put("y", action.getCardAttacked().getY());
+		command.set("cardAttacked", coords2);
+		return command;
+	}
+
+	public void  cardUsesAbility(ActionsInput action, ArrayNode output) {
+		int x1 = action.getCardAttacker().getX();
+		int y1 = action.getCardAttacker().getY();
+		int x2 = action.getCardAttacked().getX();
+		int y2 = action.getCardAttacked().getY();
+
+		if ((x1 < 0 || x1 > 3) || (x2 < 0 || x2 > 3) || (y1 >= board.get(x1).getRow().size()) || (y2 >= board.get(x2).getRow().size())) {
+			return;
+		}
+		PlayedCard attacker = board.get(x1).getRow().get(y1);
+		PlayedCard attacked = board.get(x2).getRow().get(y2);
+		if (board.get(x1).getRow().get(y1).isFrozen()) {
+			//error: card is frozen
+			ObjectNode command = abilityError(action);
+			command.put("error", "Attacker card is frozen.");
+			output.add(command);
+		} else if (!board.get(x1).getRow().get(y1).getCanAttack()) {
+			//error: already attacked
+			ObjectNode command = abilityError(action);
+			command.put("error", "Attacker card has already attacked this turn.");
+			output.add(command);
+		} else if (attacker.getName().equals("Disciple")) {
+			if ((x1 <= 1 && x2 <= 1) || (x1 >=2 && x2 >= 2)) {
+				Disciple card = (Disciple) attacker;
+				card.useAbility(attacked);
+				board.get(x2).getRow().get(y2).setHealth(attacked.getHealth(), true);
+				board.get(x1).getRow().get(y1).setCanAttack(false);
+			} else {
+				ObjectNode command = abilityError(action);
+				command.put("error", "Attacked card does not belong to the current player.");
+				output.add(command);
+			}
+		} else {
+			if ((x1 <= 1 && x2 <= 1) || (x1 >=2 && x2 >= 2)) {
+				//error: card doesn't belong to enemy
+				ObjectNode command = abilityError(action);
+				command.put("error", "Attacked card does not belong to the enemy.");
+				output.add(command);
+			} else if (!isAttackValid(x1, x2, y2)) {
+				//error: card is not a tank
+				ObjectNode command = abilityError(action);
+				command.put("error", "Attacked card is not of type 'Tank'.");
+				output.add(command);
+			} else {
+				if (attacker.getName().equals("The Ripper")) {
+					TheRipper card = (TheRipper) attacker;
+					card.useAbility(attacked);
+				} else if (attacker.getName().equals("Miraj")) {
+					Miraj card = (Miraj) attacker;
+					card.useAbility(attacked);
+				} else if (attacker.getName().equals("The Cursed One")) {
+					TheCursedOne card = (TheCursedOne) attacker;
+					card.useAbility(attacked);
+				}
+				board.get(x2).getRow().remove(y2);
+				if (attacked.getHealth() > 0) {
+					board.get(x2).getRow().add(y2, attacked);
+				}
+				board.get(x1).getRow().get(y1).setCanAttack(false);
+			}
+		}
 	}
 
 	public void useAttackHero() {
@@ -185,9 +343,9 @@ public class ProcessActions {
 		ObjectNode command = objectMapper.createObjectNode();
 		command.put("command", "getCardsOnTable");
 		ArrayNode boardArray = objectMapper.createArrayNode();
-		for (int i = 3; i >= 0; --i) {
+		for (BoardRow row : board) {
 			ArrayNode rowArray = objectMapper.createArrayNode();
-			for (PlayedCard card : board.get(i).getRow()) {
+			for (PlayedCard card : row.getRow()) {
 				ObjectNode cardNode = objectMapper.createObjectNode();
 				cardNode.put("mana", card.getMana());
 				cardNode.put("attackDamage", card.getAttackDamage());
@@ -234,8 +392,34 @@ public class ProcessActions {
 		output.add(command);
 	}
 
-	public void getCardAtPosition() {
+	public void getCardAtPosition(ActionsInput action, ArrayNode output) {
+		int x = action.getX();
+		int y = action.getY();
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode command = objectMapper.createObjectNode();
+		command.put("command", "getCardAtPosition");
+		command.put("x", x);
+		command.put("y", y);
+		if (x < 0 || x > 3 || (y >= board.get(x).getRow().size())) {
+			command.put("output", "No card available at that position.");
+		} else {
+			PlayedCard card = board.get(x).getRow().get(y);
+			ObjectNode cardNode = objectMapper.createObjectNode();
+			cardNode.put("mana", card.getMana());
+			cardNode.put("attackDamage", card.getAttackDamage());
+			cardNode.put("health", card.getHealth());
+			cardNode.put("description", card.getDescription());
 
+			ArrayList<String> colors = card.getColors();
+			ArrayNode colorsArrayNode = objectMapper.createArrayNode();
+			for (String color : colors) {
+				colorsArrayNode.add(color);
+			}
+			cardNode.set("colors", colorsArrayNode);
+			cardNode.put("name", card.getName());
+			command.set("output", cardNode);
+		}
+		output.add(command);
 	}
 
 	public void getFrozenCardsOnTable() {
@@ -267,6 +451,12 @@ public class ProcessActions {
 			getPlayerMana(player[action.getPlayerIdx() -1], action.getPlayerIdx(), output);
 		} else if (command.equals("getCardsOnTable")) {
 			getCardsOnTable(output);
+		} else if (command.equals("cardUsesAttack")) {
+			cardUsesAttack(action, output);
+		} else if (command.equals("getCardAtPosition")) {
+			getCardAtPosition(action, output);
+		} else if (command.equals("cardUsesAbility")) {
+			cardUsesAbility(action, output);
 		}
 	}
 

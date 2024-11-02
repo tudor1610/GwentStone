@@ -8,4 +8,11 @@ public class Miraj extends PlayedCard {
 		super(card);
 	}
 
+	@Override
+	public void useAbility(PlayedCard attacked) {
+		int health =  attacked.getHealth();
+		int myHealth = this.getHealth();
+		this.setHealth(health, true);
+		attacked.setHealth(myHealth, true);
+	}
 }

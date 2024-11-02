@@ -71,6 +71,7 @@ public class Gameplay {
 				int currPlayer = (startPlayer + ok % 2) % 2;
 				if (turn % 2 == 0 && ok == 2) {
 					this.UpdatePlayersHands(player, turn / 2);
+					processActions.updateCardsAfterTurn();
 					ok = 0;
 				}
 				if (action.getCommand().equals("endPlayerTurn")) {
