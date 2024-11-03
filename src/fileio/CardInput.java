@@ -13,6 +13,15 @@ public final class CardInput {
     public CardInput() {
     }
 
+    public CardInput(CardInput card) {
+        mana = card.getMana();
+        attackDamage = card.getAttackDamage();
+        health = card.getHealth();
+        description = card.getDescription();
+        colors = card.getColors();
+        name = card.getName();
+    }
+
     public int getMana() {
         return mana;
     }

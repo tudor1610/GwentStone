@@ -2,18 +2,18 @@ package game;
 
 import java.util.ArrayList;
 
-public class BoardRow {
-	private ArrayList<PlayedCard>row;
+public final class BoardRow {
+    private ArrayList<PlayedCard> row;
 
-	public BoardRow() {
-		row = new ArrayList<>(5);
-	}
+    public BoardRow() {
+        row = new ArrayList<PlayedCard>();
+    }
 
-	public ArrayList<PlayedCard> getRow() {
-		return row;
-	}
+    public ArrayList<PlayedCard> getRow() {
+        return row;
+    }
 
-	public void setRow(ArrayList<PlayedCard> row) {
-		this.row = row;
-	}
+    public void setRow(final ArrayList<PlayedCard> row) {
+        this.row = row;
+    }
 }

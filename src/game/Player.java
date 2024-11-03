@@ -1,31 +1,48 @@
 package game;
 
+import Heros.EmpressThorina;
+import Heros.GeneralKocioraw;
+import Heros.KingMudface;
+import Heros.LordRoyce;
 import fileio.CardInput;
 
 import java.util.ArrayList;
 
 public class Player {
 	private int mana;
-	private CardInput hero;
+	public Hero hero;
 	private ArrayList<CardInput> hand;
 	private ArrayList<CardInput> deck;
+	private int wins;
 
-	public Player(int mana, ArrayList<CardInput> deck, CardInput hero) {
+	public Player(int mana, ArrayList<CardInput> deck, CardInput hero, int nrWins) {
 		this.mana = mana;
-		this.hero = hero;
 		this.hand = new ArrayList<CardInput>();
 		this.deck = deck;
+		String name = hero.getName();
+		if (name.equals("Lord Royce")) {
+			this.hero = new LordRoyce(hero);
+		} else if (name.equals("Empress Thorina")) {
+			this.hero = new EmpressThorina(hero);
+		} else if (name.equals("King Mudface")) {
+			this.hero = new KingMudface(hero);
+		} else if (name.equals("General Kocioraw")) {
+			this.hero = new GeneralKocioraw(hero);
+		}
+		wins = nrWins;
 	}
 
 	public void setMana(int mana, Boolean ok) {
-		if (ok == Boolean.TRUE)
+		if (ok)
 			this.mana += mana;
-		else
-			this.mana = mana;
 	}
 
-	public void setHero(CardInput hero) {
-		this.hero = hero;
+	public int getWins() {
+		return wins;
+	}
+
+	public void newWin() {
+		wins = wins + 1;
 	}
 
 	public void setHand(ArrayList<CardInput> hand) {
@@ -48,9 +65,6 @@ public class Player {
 		return deck;
 	}
 
-	public CardInput getHero() {
-		return hero;
-	}
 
 	@Override
 	public String toString() {
