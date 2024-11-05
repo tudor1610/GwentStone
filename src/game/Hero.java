@@ -5,71 +5,133 @@ import fileio.CardInput;
 import java.util.ArrayList;
 
 public class Hero {
-	private int mana;
-	private int health;
-	private String description;
-	private ArrayList<String> colors;
-	private String name;
-	private boolean canAttack;
+    private int mana;
+    private int health;
+    private String description;
+    private ArrayList<String> colors;
+    private String name;
+    private boolean canAttack;
 
-	public Hero(CardInput cardInput) {
-		mana = cardInput.getMana();
-		health = 30;
-		description = cardInput.getDescription();
-		colors = cardInput.getColors();
-		name = cardInput.getName();
-		canAttack = true;
-	}
+    public Hero(final CardInput cardInput) {
+        final int hp = 30;
+        mana = cardInput.getMana();
+        health = hp;
+        description = cardInput.getDescription();
+        colors = cardInput.getColors();
+        name = cardInput.getName();
+        canAttack = true;
+    }
 
-	public void useAbility(ArrayList<PlayedCard> affectedRow) {
-		System.out.println("Nu i bine");
-	}
+    /**
+     * Uses the hero's ability on the specified row of played cards.
+     *
+     * @param affectedRow the row of played cards that will be affected by the hero's ability
+     */
+    public void useAbility(final ArrayList<PlayedCard> affectedRow) {
+    }
 
-	public int getMana() {
-		return mana;
-	}
+    /**
+     * Retrieves the current mana of the hero.
+     *
+     * @return the current mana of the hero
+     */
+    public int getMana() {
+        return mana;
+    }
 
-	public boolean isCanAttack() {
-		return canAttack;
-	}
+    /**
+     * Checks if the hero is currently able to attack.
+     *
+     * @return a boolean indicating whether the hero can attack
+     */
+    public boolean isCanAttack() {
+        return canAttack;
+    }
 
-	public void setCanAttack(boolean canAttack) {
-		this.canAttack = canAttack;
-	}
+    /**
+     * Sets the ability of the hero to attack.
+     *
+     * @param canAttack a boolean indicating*/
+    public void setCanAttack(final boolean canAttack) {
+        this.canAttack = canAttack;
+    }
 
-	public void setMana(int mana) {
-		this.mana = mana;
-	}
+    /**
+     * Sets the mana value for the hero.
+     *
+     * @param mana the new mana value to set
+     */
+    public void setMana(final int mana) {
+        this.mana = mana;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Retrieves the description of the hero.
+     *
+     * @return the description of the hero
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Sets the description for the hero.
+     *
+     * @param description the new description to set
+     */
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public int getHealth() {
-		return health;
-	}
+    /**
+     * Retrieves the current health of the hero.
+     *
+     * @return the hero's*/
+    public int getHealth() {
+        return health;
+    }
 
-	public void setHealth(int health) {
-		this.health = health;
-	}
+    /**
+     * Sets the health of the hero.
+     *
+     * @param health the new health value to set
+     */
+    public void setHealth(final int health) {
+        this.health = health;
+    }
 
-	public String getName() {
-		return name;
-	}
+    /**
+     * Retrieves the name of the hero.
+     *
+     * @return the name of the hero
+     */
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Sets the name for the hero.
+     *
+     * @param name the new name to set
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public ArrayList<String> getColors() {
-		return colors;
-	}
+    /**
+     * Retrieves the list of colors associated with the hero.
+     *
+     * @return an ArrayList of Strings representing the hero's colors.
+     */
+    public ArrayList<String> getColors() {
+        return colors;
+    }
 
-	public void setColors(ArrayList<String> colors) {
-		this.colors = colors;
-	}
+    /**
+     * Sets the colors associated with the hero.
+     *
+     * @param colors the list of colors to*/
+    public void setColors(final ArrayList<String> colors) {
+        this.colors = colors;
+    }
 }

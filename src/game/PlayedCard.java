@@ -4,102 +4,192 @@ import fileio.CardInput;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a card that has been played in a game, including its attributes
+ * such as mana, attack damage, health, description, colors, name, and statuses
+ * like frozen or ability to attack.
+ */
 public class PlayedCard {
-	private int mana;
-	private int attackDamage;
-	private int health;
-	private String description;
-	private ArrayList<String> colors;
-	private String name;
-	private boolean frozen;
-	private boolean canAttack;
+    private int mana;
+    private int attackDamage;
+    private int health;
+    private String description;
+    private ArrayList<String> colors;
+    private String name;
+    private boolean frozen;
+    private boolean canAttack;
 
-	public PlayedCard() {
+    public PlayedCard() {
 
-	}
+    }
 
-	public PlayedCard(CardInput card) {
-		mana = card.getMana();
-		attackDamage = card.getAttackDamage();
-		health = card.getHealth();
-		description = card.getDescription();
-		colors = new ArrayList<>();
-		colors.addAll(card.getColors());
-		name = card.getName();
-		frozen = false;
-		canAttack = true;
-	}
+    public PlayedCard(final CardInput card) {
+        mana = card.getMana();
+        attackDamage = card.getAttackDamage();
+        health = card.getHealth();
+        description = card.getDescription();
+        colors = new ArrayList<>();
+        colors.addAll(card.getColors());
+        name = card.getName();
+        frozen = false;
+        canAttack = true;
+    }
 
-	public void useAbility(PlayedCard attacked) {
-		System.out.println("Ceva clar nu a mers bine");
-	}
+    /**
+     * Uses the ability of the current card on a targeted card.
+     *
+     * @param attacked the card that is being targeted by the ability
+     */
+    public void useAbility(final PlayedCard attacked) {
 
-	public boolean getCanAttack() {
-		return canAttack;
-	}
+    }
 
-	public void setCanAttack(boolean canAttack) {
-		this.canAttack = canAttack;
-	}
+    /**
+     * Checks if the card can attack.
+     *
+     * @return true if the card can attack, false otherwise.
+     */
+    public boolean getCanAttack() {
+        return canAttack;
+    }
 
-	public int getMana() {
-		return mana;
-	}
+    /**
+     * Sets whether the card can attack.
+     *
+     * @param canAttack the new attack capability status to set.
+     */
+    public void setCanAttack(final boolean canAttack) {
+        this.canAttack = canAttack;
+    }
 
-	public void setMana(int mana) {
-		this.mana = mana;
-	}
+    /**
+     * Retrieves the mana value of the card.
+     *
+     * @return the mana value of the card.
+     */
+    public int getMana() {
+        return mana;
+    }
 
-	public int getAttackDamage() {
-		return attackDamage;
-	}
+    /**
+     * Sets the mana value for this card.
+     *
+     **/
+    public void setMana(final int mana) {
+        this.mana = mana;
+    }
 
-	public void setAttackDamage(int attackDamage) {
-		this.attackDamage = attackDamage;
-	}
+    /**
+     * Retrieves the attack damage of the card.
+     *
+     * @return the attack damage value of the card.
+     */
+    public int getAttackDamage() {
+        return attackDamage;
+    }
 
-	public int getHealth() {
-		return health;
-	}
+    /**
+     * Sets the attack damage value for this card.
+     *
+     * @param attackDamage the new attack damage to set
+     */
+    public void setAttackDamage(final int attackDamage) {
+        this.attackDamage = attackDamage;
+    }
 
-	public void setHealth(int health, Boolean k) {
-		if (k) {
-			this.health = health;
-		} else {
-			this.health = this.health - health;
-		}
+    /**
+     * Retrieves the health of the card.
+     *
+     * @return the health value of the card.
+     */
+    public int getHealth() {
+        return health;
+    }
 
-	}
+    /**
+     * Sets the health of the card. If the flag is set to true,
+     * the health is assigned the new value.
+     * If the flag is set to false, the health is decreased by the specified value.
+     *
+     * @param hp the value to set or decrease the health by
+     * @param k a flag indicating whether to set (true) or decrease (false) the health
+     */
+    public void setHealth(final int hp, final Boolean k) {
+        if (k) {
+            this.health = hp;
+        } else {
+            this.health -= hp;
+        }
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Retrieves the description of the card.
+     *
+     * @return the description of the card.
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Sets the description for the card.
+     *
+     * @param description the new description to set
+     */
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public ArrayList<String> getColors() {
-		return colors;
-	}
+    /**
+     * Retrieves the colors associated with the card.
+     *
+     */
+    public ArrayList<String> getColors() {
+        return colors;
+    }
 
-	public void setColors(ArrayList<String> colors) {
-		this.colors = colors;
-	}
+    /**
+     * Sets the colors for the card.
+     *
+     * @param colors the colors to be set for the card
+     */
+    public void setColors(final ArrayList<String> colors) {
+        this.colors = colors;
+    }
 
-	public String getName() {
-		return name;
-	}
+    /**
+     * Retrieves the name of the card.
+     *
+     * @return the name of the card.
+     */
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Sets the name of the card.
+     *
+     * @param name the new name to set
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public boolean isFrozen() {
-		return frozen;
-	}
+    /**
+     * Checks if the card is currently frozen.
+     *
+     * @return true if the card is frozen, false otherwise.
+     */
+    public boolean isFrozen() {
+        return frozen;
+    }
 
-	public void setFrozen(boolean frozen) {
-		this.frozen = frozen;
-	}
+    /**
+     * Sets the frozen status of the card.
+     *
+     * @param frozen the new frozen status to set
+     */
+    public void setFrozen(final boolean frozen) {
+        this.frozen = frozen;
+    }
 }

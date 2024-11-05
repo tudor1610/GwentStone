@@ -1,78 +1,145 @@
 package game;
 
-import Heros.EmpressThorina;
-import Heros.GeneralKocioraw;
-import Heros.KingMudface;
-import Heros.LordRoyce;
+import heros.EmpressThorina;
+import heros.GeneralKocioraw;
+import heros.KingMudface;
+import heros.LordRoyce;
 import fileio.CardInput;
 
 import java.util.ArrayList;
 
 public class Player {
-	private int mana;
-	public Hero hero;
-	private ArrayList<CardInput> hand;
-	private ArrayList<CardInput> deck;
-	private int wins;
+    private int mana;
+    private Hero hero;
+    private ArrayList<CardInput> hand;
+    private ArrayList<CardInput> deck;
+    private int wins;
 
-	public Player(int mana, ArrayList<CardInput> deck, CardInput hero, int nrWins) {
-		this.mana = mana;
-		this.hand = new ArrayList<CardInput>();
-		this.deck = deck;
-		String name = hero.getName();
-		if (name.equals("Lord Royce")) {
-			this.hero = new LordRoyce(hero);
-		} else if (name.equals("Empress Thorina")) {
-			this.hero = new EmpressThorina(hero);
-		} else if (name.equals("King Mudface")) {
-			this.hero = new KingMudface(hero);
-		} else if (name.equals("General Kocioraw")) {
-			this.hero = new GeneralKocioraw(hero);
-		}
-		wins = nrWins;
-	}
+    public Player(final int startMana, final ArrayList<CardInput> deck,
+                  final CardInput hero, final int nrWins) {
+        this.mana = startMana;
+        this.hand = new ArrayList<CardInput>();
+        this.deck = deck;
+        String name = hero.getName();
+        switch (name) {
+            case "Lord Royce":
+                this.hero = new LordRoyce(hero);
+                break;
+            case "Empress Thorina":
+                this.hero = new EmpressThorina(hero);
+                break;
+            case "King Mudface":
+                this.hero = new KingMudface(hero);
+                break;
+            default:
+                this.hero = new GeneralKocioraw(hero);
+                break;
+        }
+        wins = nrWins;
+    }
 
-	public void setMana(int mana, Boolean ok) {
-		if (ok)
-			this.mana += mana;
-	}
+    /**
+     * Retrieves the hero assigned to the player.
+     *
+     * @return the player's current Hero object.
+     */
+    public Hero getHero() {
+        return hero;
+    }
 
-	public int getWins() {
-		return wins;
-	}
+    /**
+     * Sets the hero for the player.
+     *
+     * @param hero the Hero object to be assigned to the player.
+     */
+    public void setHero(final Hero hero) {
+        this.hero = hero;
+    }
 
-	public void newWin() {
-		wins = wins + 1;
-	}
+    /**
+     * Updates the player's mana based on the provided value.
+     *
+     * @param mana the amount of mana to be added or deducted from the current mana.
+     * @param ok a boolean flag indicating whether the mana update should be applied.
+     */
+    public void setMana(final int addMana, final Boolean ok) {
+        if (ok) {
+            this.mana += addMana;
+        }
+    }
 
-	public void setHand(ArrayList<CardInput> hand) {
-		this.hand = hand;
-	}
+    /**
+     * Retrieves the number of wins the player has achieved.
+     *
+     * @return the player's win count as an integer.
+     */
+    public int getWins() {
+        return wins;
+    }
 
-	public void setDeck(ArrayList<CardInput> deck) {
-		this.deck = deck;
-	}
+    /**
+     * Increments the win count for the player by one.
+     */
+    public void newWin() {
+        wins = wins + 1;
+    }
 
-	public int getMana() {
-		return mana;
-	}
+    /**
+     * Sets the hand of cards for the player.
+     *
+     * @param hand an ArrayList containing CardInput objects representing the player's hand.
+     */
+    public void setHand(final ArrayList<CardInput> hand) {
+        this.hand = hand;
+    }
 
-	public ArrayList<CardInput> getHand() {
-		return hand;
-	}
+    /**
+     * Sets the deck of cards for the player.
+     *
+     * @param deck an ArrayList containing CardInput objects representing the player's deck.
+     */
+    public void setDeck(final ArrayList<CardInput> deck) {
+        this.deck = deck;
+    }
 
-	public ArrayList<CardInput> getDeck() {
-		return deck;
-	}
+    /**
+     * Retrieves the current mana of the player.
+     *
+     * @return the player's mana as an integer.
+     */
+    public int getMana() {
+        return mana;
+    }
+
+    /**
+     * Retrieves the current hand of the player.
+     *
+     * @return an ArrayList containing the cards in the player's hand.
+     */
+    public ArrayList<CardInput> getHand() {
+        return hand;
+    }
+
+    /**
+     * Retrieves the deck of cards*/
+    public ArrayList<CardInput> getDeck() {
+        return deck;
+    }
 
 
-	@Override
-	public String toString() {
-		return "Player{" +
-				"hero=" + hero +
-				", hand=" + hand +
-				", deck=" + deck +
-				", mana=" + mana +
-				'}';
-	}
+    /**
+     * Returns a string representation of the Player object.
+     *
+     * @return A string representation of the Player object, including the hero,
+     *         hand, deck, and mana fields.
+     */
+    @Override
+    public String toString() {
+        return "Player{"
+                + "hero=" + hero
+                + ", hand=" + hand
+                + ", deck=" + deck
+                + ", mana=" + mana
+                + '}';
+    }
 }
