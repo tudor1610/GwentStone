@@ -17,9 +17,9 @@ strategic card placement and abilities.
 
 ## Table of Contents
 
-1. [Objective](#objective)
+1. [Overview](#overview)
 2. [Game Mechanics](#game-mechanics)
-3. [Class Structure](#class-structure)
+3. [Class Structure](#class-structure-and-programme-flow)
 
 ---
 
